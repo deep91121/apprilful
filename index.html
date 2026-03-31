@@ -1,227 +1,148 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>EarnPay - Instant Rewards</title>
+  <meta charset="UTF-8">
+  <title>Earn ₹150 Instantly</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Font -->
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+
   <style>
     body { font-family: 'DM Sans', sans-serif; }
-    @keyframes fade-in {
-      from { opacity: 0; transform: translateY(-10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .animate-fade-in { animation: fade-in 0.4s ease-out forwards; }
   </style>
 </head>
-<body class="bg-gray-50">
-  <div id="root"></div>
 
-  <script type="module">
-    import React from 'https://esm.sh/react@18.2.0';
-    import ReactDOM from 'https://esm.sh/react-dom@18.2.0/client';
-    import confetti from 'https://esm.sh/canvas-confetti@1.6.0';
-    import * as Lucide from 'https://esm.sh/lucide-react@0.300.0';
+<body class="bg-gradient-to-br from-green-50 to-blue-50">
 
-    const { useState, useEffect } = React;
-    const { 
-      Check, ChevronRight, Star, Share2, Send, Copy, 
-      Shield, Award, TrendingUp, Users, ArrowRight, 
-      Loader2, Lock, X 
-    } = Lucide;
+<div id="app"></div>
 
-    function AprilFoolsApp() {
-      const [step, setStep] = useState(1);
-      const [formData, setFormData] = useState({ name: '', email: '' });
-      const [tasks, setTasks] = useState({ share: 0, upi: '' });
-      const [processing, setProcessing] = useState(false);
-      const [loadingStep, setLoadingStep] = useState(0);
-      const [activityItems, setActivityItems] = useState([
-        { name: 'Priya S.', action: 'earned ₹150', time: '2m ago', emoji: '🎉' },
-        { name: 'Vikram R.', action: 'completed tasks', time: 'Just now', emoji: '✅' },
-        { name: 'Neha K.', action: 'withdrew ₹300', time: '5m ago', emoji: '💸' },
-      ]);
+<script>
+let step = 1;
+let name = "";
 
-      // Fake Live Feed Logic
-      useEffect(() => {
-        if (step === 3) {
-          const interval = setInterval(() => {
-            const names = ['Rahul K.', 'Anjali M.', 'Rohan P.', 'Sneha T.', 'Arjun S.'];
-            const actions = ['earned ₹150', 'verified account', 'withdrew ₹250'];
-            const randomName = names[Math.floor(Math.random() * names.length)];
-            const randomAction = actions[Math.floor(Math.random() * actions.length)];
-            setActivityItems(prev => [
-              { name: randomName, action: randomAction, time: 'Just now', emoji: '🌟' },
-              ...prev.slice(0, 2)
-            ]);
-          }, 4000);
-          return () => clearInterval(interval);
-        }
-      }, [step]);
+function render() {
+  const app = document.getElementById("app");
 
-      const handleShare = () => {
-        if (tasks.share < 3) {
-          setTasks(prev => ({ ...prev, share: prev.share + 1 }));
-          const msg = "Bro check this app, I just earned ₹150! 🎉 https://earnpay-rewards.in";
-          window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
-        }
-      };
+  // STEP 1
+  if (step === 1) {
+    app.innerHTML = `
+      <div class="p-6 max-w-md mx-auto text-center">
+        <h1 class="text-4xl font-bold mb-4">💰 Earn ₹150 Instantly</h1>
+        <p class="mb-6 text-gray-600">Join 10L+ users earning daily</p>
+        <button onclick="next()" class="bg-green-600 text-white px-6 py-3 rounded-xl w-full">Get Started</button>
+      </div>
+    `;
+  }
 
-      const runWithdrawal = async () => {
-        if (!tasks.upi) return;
-        setProcessing(true);
-        const labels = ['Connecting to Gateway...', 'Verifying UPI ID...', 'Requesting NPCI Approval...', 'Finalizing Transfer...'];
-        for (let i = 0; i < labels.length; i++) {
-          setLoadingStep(i);
-          await new Promise(r => setTimeout(r, 1200));
-        }
-        confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
-        setStep(6);
-      };
+  // STEP 2
+  if (step === 2) {
+    app.innerHTML = `
+      <div class="p-6 max-w-md mx-auto">
+        <h2 class="text-2xl font-bold mb-4">Create Account</h2>
+        <input id="name" placeholder="Enter name" class="w-full p-3 border rounded mb-4">
+        <button onclick="saveName()" class="bg-green-600 text-white px-6 py-3 rounded-xl w-full">Continue</button>
+      </div>
+    `;
+  }
 
-      // --- Views ---
+  // STEP 3
+  if (step === 3) {
+    app.innerHTML = `
+      <div class="p-6 max-w-md mx-auto text-center">
+        <h2 class="text-xl mb-2">Welcome ${name}</h2>
+        <div class="text-4xl font-bold mb-4">₹150</div>
+        <p class="mb-6">Complete tasks to withdraw</p>
+        <button onclick="next()" class="bg-green-600 text-white px-6 py-3 rounded-xl w-full">Continue</button>
+      </div>
+    `;
+  }
 
-      // 1. Landing Page
-      if (step === 1) return (
-        <div className="min-h-screen bg-gradient-to-b from-emerald-50 to-white flex flex-col items-center justify-center p-6 text-center">
-          <div className="w-20 h-20 bg-emerald-600 rounded-3xl flex items-center justify-center text-white text-4xl font-bold mb-6 shadow-xl animate-bounce">₹</div>
-          <h1 className="text-4xl font-extrabold text-gray-900 mb-2">EarnPay</h1>
-          <p className="text-gray-600 text-lg mb-8 max-w-xs">Refer friends and get ₹150 instantly in your bank account. 100% Verified.</p>
-          <button onClick={() => setStep(2)} className="w-full max-w-xs bg-emerald-600 hover:bg-emerald-700 text-white py-4 rounded-2xl font-bold text-lg shadow-lg flex items-center justify-center gap-2 transition-transform active:scale-95">
-            Claim Your ₹150 <ArrowRight size={20}/>
-          </button>
-          <div className="mt-8 flex gap-4 text-xs text-gray-400 uppercase tracking-widest font-bold">
-            <span>RBI Approved*</span>
-            <span>ISO Certified</span>
-          </div>
-        </div>
-      );
+  // STEP 4
+  if (step === 4) {
+    app.innerHTML = `
+      <div class="p-6 max-w-md mx-auto">
+        <h2 class="text-2xl font-bold mb-4">Complete Tasks</h2>
+        <button onclick="taskDone()" class="bg-blue-500 text-white px-4 py-2 rounded w-full mb-3">Share with 3 friends</button>
+        <button onclick="taskDone()" class="bg-blue-500 text-white px-4 py-2 rounded w-full mb-3">Complete survey</button>
+        <button onclick="taskDone()" class="bg-blue-500 text-white px-4 py-2 rounded w-full mb-3">Verify OTP</button>
+      </div>
+    `;
+  }
 
-      // 2. Signup
-      if (step === 2) return (
-        <div className="min-h-screen bg-white p-6 flex flex-col">
-          <h2 className="text-3xl font-bold mb-2">Create Account</h2>
-          <p className="text-gray-500 mb-8">Enter details to link your wallet.</p>
-          <div className="space-y-4 flex-1">
-            <input className="w-full border-2 border-gray-100 bg-gray-50 p-4 rounded-2xl focus:border-emerald-500 outline-none transition-all" placeholder="Full Name" onChange={e => setFormData({...formData, name: e.target.value})} />
-            <input className="w-full border-2 border-gray-100 bg-gray-50 p-4 rounded-2xl focus:border-emerald-500 outline-none transition-all" placeholder="Email Address" onChange={e => setFormData({...formData, email: e.target.value})} />
-          </div>
-          <button onClick={() => setStep(3)} disabled={!formData.name} className="w-full bg-emerald-600 text-white py-4 rounded-2xl font-bold text-lg disabled:opacity-50">Continue</button>
-        </div>
-      );
+  // STEP 5
+  if (step === 5) {
+    app.innerHTML = `
+      <div class="p-6 max-w-md mx-auto">
+        <h2 class="text-2xl font-bold mb-4">Enter UPI ID</h2>
+        <input placeholder="yourname@upi" class="w-full p-3 border rounded mb-4">
+        <button onclick="process()" class="bg-green-600 text-white px-6 py-3 rounded-xl w-full">Receive ₹150</button>
+      </div>
+    `;
+  }
 
-      // 3. Dashboard
-      if (step === 3) return (
-        <div className="min-h-screen bg-gray-50 p-6">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-bold">Hi, {formData.name.split(' ')[0]}!</h2>
-            <div className="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1">
-              <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div> LIVE
-            </div>
-          </div>
-          <div className="bg-emerald-600 p-8 rounded-[2rem] text-white shadow-2xl mb-8 relative overflow-hidden">
-            <p className="opacity-80 text-sm">Withdrawable Balance</p>
-            <h2 className="text-5xl font-black mt-1">₹150.00</h2>
-            <div className="absolute right-[-10px] top-[-10px] opacity-10"><Award size={120} /></div>
-          </div>
-          <button onClick={() => setStep(4)} className="w-full bg-white p-6 rounded-2xl shadow-sm border-2 border-transparent hover:border-emerald-500 flex justify-between items-center transition-all group">
-            <div className="text-left">
-              <p className="font-bold text-gray-900">Complete Tasks</p>
-              <p className="text-xs text-gray-500">Required for first withdrawal</p>
-            </div>
-            <ChevronRight className="text-gray-300 group-hover:text-emerald-500" />
-          </button>
-          
-          <div className="mt-8">
-            <h3 className="font-bold text-gray-400 text-xs uppercase mb-4 tracking-widest">Recent Payouts</h3>
-            <div className="space-y-3">
-              {activityItems.map((item, i) => (
-                <div key={i} className="bg-white p-4 rounded-xl flex items-center justify-between animate-fade-in shadow-sm">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center font-bold text-xs">{item.name[0]}</div>
-                    <div>
-                      <p className="text-sm font-bold">{item.name}</p>
-                      <p className="text-[10px] text-gray-500">{item.action}</p>
-                    </div>
-                  </div>
-                  <span className="text-xs text-gray-400">{item.time}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      );
+  // STEP 6 (PROCESSING)
+  if (step === 6) {
+    app.innerHTML = `
+      <div class="p-6 text-center">
+        <h2 class="text-xl font-bold mb-4">Processing Payment...</h2>
+        <p id="loading">Connecting...</p>
+      </div>
+    `;
 
-      // 4. Tasks
-      if (step === 4) return (
-        <div className="min-h-screen bg-white p-6">
-          <h2 className="text-2xl font-bold mb-6">Verification</h2>
-          <div className="bg-orange-50 border-2 border-orange-100 p-6 rounded-3xl mb-6">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="font-bold text-orange-800">Share with Friends</h3>
-              <span className="text-orange-600 font-bold">{tasks.share}/3</span>
-            </div>
-            <div className="w-full h-2 bg-orange-200 rounded-full mb-6">
-              <div className="h-full bg-orange-500 rounded-full transition-all" style={{width: `${(tasks.share/3)*100}%`}}></div>
-            </div>
-            <button onClick={handleShare} className="w-full bg-white text-orange-600 py-3 rounded-xl font-bold border-2 border-orange-200 flex items-center justify-center gap-2">
-              <Share2 size={18}/> Share on WhatsApp
-            </button>
-          </div>
-          <button 
-            disabled={tasks.share < 3}
-            onClick={() => setStep(5)}
-            className="w-full bg-emerald-600 text-white py-4 rounded-2xl font-bold disabled:opacity-30 transition-all"
-          >
-            Unlock Withdrawal
-          </button>
-        </div>
-      );
+    let messages = ["Verifying...", "Sending ₹150...", "Almost done..."];
+    let i = 0;
 
-      // 5. UPI Input & Processing
-      if (step === 5) return (
-        <div className="min-h-screen bg-white flex flex-col items-center justify-center p-6 text-center">
-          {processing ? (
-            <div className="animate-fade-in">
-              <Loader2 className="animate-spin mx-auto mb-6 text-emerald-600" size={60} />
-              <h2 className="text-xl font-bold mb-2">{['Connecting...', 'Verifying...', 'Requesting...', 'Finalizing...'][loadingStep]}</h2>
-              <p className="text-gray-400 text-sm italic">Please do not close this window</p>
-            </div>
-          ) : (
-            <div className="w-full max-w-xs animate-fade-in">
-              <div className="w-16 h-16 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-6"><Shield size={32}/></div>
-              <h2 className="text-2xl font-bold mb-2">Final Step</h2>
-              <p className="text-gray-500 mb-8 text-sm">Enter your UPI ID to receive ₹150 instantly.</p>
-              <input 
-                className="w-full border-2 p-4 rounded-2xl mb-6 text-center font-mono text-lg focus:border-emerald-500 outline-none" 
-                placeholder="username@upi" 
-                onChange={e => setTasks({...tasks, upi: e.target.value})}
-              />
-              <button onClick={runWithdrawal} className="w-full bg-emerald-600 text-white py-4 rounded-2xl font-bold">Transfer Now</button>
-            </div>
-          )}
-        </div>
-      );
+    let interval = setInterval(() => {
+      document.getElementById("loading").innerText = messages[i];
+      i++;
+      if (i >= messages.length) {
+        clearInterval(interval);
+        setTimeout(() => {
+          step = 7;
+          render();
+        }, 1000);
+      }
+    }, 1000);
+  }
 
-      // 6. The Reveal
-      if (step === 6) return (
-        <div className="min-h-screen bg-white flex flex-col items-center justify-center p-8 text-center animate-fade-in">
-          <h1 className="text-9xl mb-6">🤡</h1>
-          <h2 className="text-5xl font-black text-red-500 mb-4 tracking-tighter">APRIL FOOLS!</h2>
-          <p className="text-gray-600 text-lg leading-relaxed mb-10 max-w-xs">
-            There is no free money, but you were ready to share this with the whole world for ₹150! 
-          </p>
-          <div className="space-y-3 w-full max-w-xs">
-            <button onClick={() => setStep(1)} className="w-full bg-gray-900 text-white py-4 rounded-2xl font-bold">Prank Someone Else</button>
-            <p className="text-[10px] text-gray-300 uppercase font-bold tracking-widest">Happy April 1st, 2026</p>
-          </div>
-        </div>
-      );
-    }
+  // STEP 7 (PRANK 😈)
+  if (step === 7) {
+    app.innerHTML = `
+      <div class="p-6 text-center">
+        <h1 class="text-5xl font-bold mb-4">😂 APRIL FOOL 😂</h1>
+        <p class="text-lg mb-6">${name}, you really thought you earned ₹150? 😭</p>
+        <div class="text-4xl font-bold mb-4">₹0.00</div>
+        <button onclick="location.reload()" class="bg-purple-600 text-white px-6 py-3 rounded-xl w-full">Try Again</button>
+      </div>
+    `;
+  }
+}
 
-    const root = ReactDOM.createRoot(document.getElementById('root'));
-    root.render(React.createElement(AprilFoolsApp));
-  </script>
+function next() {
+  step++;
+  render();
+}
+
+function saveName() {
+  name = document.getElementById("name").value || "User";
+  next();
+}
+
+function taskDone() {
+  alert("Task completed ✅");
+}
+
+function process() {
+  step = 6;
+  render();
+}
+
+render();
+</script>
+
 </body>
 </html>
