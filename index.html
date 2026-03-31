@@ -2,146 +2,108 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Earn ₹150 Instantly</title>
+  <title>System Security Check</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Tailwind -->
-  <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- Font -->
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700&display=swap" rel="stylesheet">
-
   <style>
-    body { font-family: 'DM Sans', sans-serif; }
+    body {
+      margin: 0;
+      background: black;
+      color: #00ff00;
+      font-family: monospace;
+      overflow: hidden;
+    }
+
+    #terminal {
+      padding: 20px;
+      white-space: pre-line;
+      font-size: 16px;
+    }
+
+    .blink {
+      animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+      0%,100% {opacity:1;}
+      50% {opacity:0;}
+    }
+
+    .glitch {
+      color: red;
+      font-size: 22px;
+      font-weight: bold;
+    }
+
+    button {
+      display: none;
+    }
   </style>
 </head>
 
-<body class="bg-gradient-to-br from-green-50 to-blue-50">
+<body>
 
-<div id="app"></div>
+<div id="terminal"></div>
 
 <script>
-let step = 1;
-let name = "";
+let terminal = document.getElementById("terminal");
 
-function render() {
-  const app = document.getElementById("app");
+let lines = [
+  "Connecting to secure banking server...",
+  "Access granted ✔",
+  "Decrypting data packets...",
+  "Injecting payload...",
+  "⚠ WARNING: Unauthorized access detected",
+  "Bypassing firewall...",
+  "Tracking device location...",
+  "Accessing camera...",
+  "Uploading personal data...",
+  "Transfer initiated..."
+];
 
-  // STEP 1
-  if (step === 1) {
-    app.innerHTML = `
-      <div class="p-6 max-w-md mx-auto text-center">
-        <h1 class="text-4xl font-bold mb-4">💰 Earn ₹150 Instantly</h1>
-        <p class="mb-6 text-gray-600">Join 10L+ users earning daily</p>
-        <button onclick="next()" class="bg-green-600 text-white px-6 py-3 rounded-xl w-full">Get Started</button>
-      </div>
-    `;
-  }
+let i = 0;
 
-  // STEP 2
-  if (step === 2) {
-    app.innerHTML = `
-      <div class="p-6 max-w-md mx-auto">
-        <h2 class="text-2xl font-bold mb-4">Create Account</h2>
-        <input id="name" placeholder="Enter name" class="w-full p-3 border rounded mb-4">
-        <button onclick="saveName()" class="bg-green-600 text-white px-6 py-3 rounded-xl w-full">Continue</button>
-      </div>
-    `;
-  }
-
-  // STEP 3
-  if (step === 3) {
-    app.innerHTML = `
-      <div class="p-6 max-w-md mx-auto text-center">
-        <h2 class="text-xl mb-2">Welcome ${name}</h2>
-        <div class="text-4xl font-bold mb-4">₹150</div>
-        <p class="mb-6">Complete tasks to withdraw</p>
-        <button onclick="next()" class="bg-green-600 text-white px-6 py-3 rounded-xl w-full">Continue</button>
-      </div>
-    `;
-  }
-
-  // STEP 4
-  if (step === 4) {
-    app.innerHTML = `
-      <div class="p-6 max-w-md mx-auto">
-        <h2 class="text-2xl font-bold mb-4">Complete Tasks</h2>
-        <button onclick="taskDone()" class="bg-blue-500 text-white px-4 py-2 rounded w-full mb-3">Share with 3 friends</button>
-        <button onclick="taskDone()" class="bg-blue-500 text-white px-4 py-2 rounded w-full mb-3">Complete survey</button>
-        <button onclick="taskDone()" class="bg-blue-500 text-white px-4 py-2 rounded w-full mb-3">Verify OTP</button>
-      </div>
-    `;
-  }
-
-  // STEP 5
-  if (step === 5) {
-    app.innerHTML = `
-      <div class="p-6 max-w-md mx-auto">
-        <h2 class="text-2xl font-bold mb-4">Enter UPI ID</h2>
-        <input placeholder="yourname@upi" class="w-full p-3 border rounded mb-4">
-        <button onclick="process()" class="bg-green-600 text-white px-6 py-3 rounded-xl w-full">Receive ₹150</button>
-      </div>
-    `;
-  }
-
-  // STEP 6 (PROCESSING)
-  if (step === 6) {
-    app.innerHTML = `
-      <div class="p-6 text-center">
-        <h2 class="text-xl font-bold mb-4">Processing Payment...</h2>
-        <p id="loading">Connecting...</p>
-      </div>
-    `;
-
-    let messages = ["Verifying...", "Sending ₹150...", "Almost done..."];
-    let i = 0;
-
-    let interval = setInterval(() => {
-      document.getElementById("loading").innerText = messages[i];
-      i++;
-      if (i >= messages.length) {
-        clearInterval(interval);
-        setTimeout(() => {
-          step = 7;
-          render();
-        }, 1000);
-      }
-    }, 1000);
-  }
-
-  // STEP 7 (PRANK 😈)
-  if (step === 7) {
-    app.innerHTML = `
-      <div class="p-6 text-center">
-        <h1 class="text-5xl font-bold mb-4">😂 APRIL FOOL 😂</h1>
-        <p class="text-lg mb-6">${name}, you really thought you earned ₹150? 😭</p>
-        <div class="text-4xl font-bold mb-4">₹0.00</div>
-        <button onclick="location.reload()" class="bg-purple-600 text-white px-6 py-3 rounded-xl w-full">Try Again</button>
-      </div>
-    `;
+function typeLine() {
+  if (i < lines.length) {
+    terminal.innerHTML += lines[i] + "\n";
+    i++;
+    setTimeout(typeLine, 700);
+  } else {
+    setTimeout(showPrank, 1500);
   }
 }
 
-function next() {
-  step++;
-  render();
+function showPrank() {
+  document.body.style.background = "white";
+  document.body.style.color = "black";
+
+  terminal.innerHTML = `
+  <div style="text-align:center; padding-top:50px;">
+    <h1 style="font-size:50px;">😂 APRIL FOOL 😂</h1>
+    <p style="font-size:20px;">Relax bro, nothing was hacked 😏</p>
+    <p style="font-size:18px;">You just got pranked!</p>
+    <button onclick="location.reload()" style="
+      display:block;
+      margin:20px auto;
+      padding:12px 20px;
+      font-size:16px;
+      background:black;
+      color:white;
+      border:none;
+      border-radius:10px;
+      cursor:pointer;
+    ">Try Again</button>
+  </div>
+  `;
 }
 
-function saveName() {
-  name = document.getElementById("name").value || "User";
-  next();
-}
+typeLine();
 
-function taskDone() {
-  alert("Task completed ✅");
-}
+// Disable user interaction (fake lock)
+document.addEventListener("keydown", e => e.preventDefault());
+document.addEventListener("contextmenu", e => e.preventDefault());
+document.addEventListener("click", e => e.preventDefault());
 
-function process() {
-  step = 6;
-  render();
-}
-
-render();
 </script>
 
 </body>
