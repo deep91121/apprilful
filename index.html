@@ -20,33 +20,57 @@ body {
 }
 
 .glitch {
-  animation: glitch 0.2s infinite;
+  animation: glitch 0.15s infinite;
   color: red;
 }
 
 @keyframes glitch {
-  0% { transform: translate(1px, -1px); }
-  50% { transform: translate(-1px, 1px); }
-  100% { transform: translate(1px, 1px); }
+  0% { transform: translate(2px,-2px); }
+  50% { transform: translate(-2px,2px); }
+  100% { transform: translate(2px,2px); }
 }
 
-#cameraPopup {
+#cameraBox {
   position: fixed;
   top: 20px;
   right: 20px;
-  background: red;
-  color: white;
-  padding: 10px;
-  border-radius: 8px;
+  width: 180px;
+  height: 120px;
+  background: black;
+  border: 2px solid red;
   display: none;
+  overflow: hidden;
+}
+
+#cameraBox video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 #countdown {
   position: fixed;
   bottom: 20px;
   left: 20px;
-  font-size: 24px;
+  font-size: 26px;
   color: red;
+  font-weight: bold;
+}
+
+#fileBar {
+  position: fixed;
+  bottom: 80px;
+  left: 20px;
+  width: 300px;
+  height: 10px;
+  background: #222;
+  display: none;
+}
+
+#fileProgress {
+  height: 100%;
+  width: 0%;
+  background: red;
 }
 </style>
 </head>
@@ -54,29 +78,36 @@ body {
 <body>
 
 <div id="terminal"></div>
-<div id="cameraPopup">📸 Camera Activated</div>
+<div id="cameraBox"><video autoplay muted></video></div>
 <div id="countdown"></div>
+
+<div id="fileBar">
+  <div id="fileProgress"></div>
+</div>
 
 <script>
 const terminal = document.getElementById("terminal");
-const popup = document.getElementById("cameraPopup");
+const cameraBox = document.getElementById("cameraBox");
+const video = cameraBox.querySelector("video");
 const countdownEl = document.getElementById("countdown");
+const fileBar = document.getElementById("fileBar");
+const fileProgress = document.getElementById("fileProgress");
 
-// 🔊 Sounds
+// 🔊 Sounds (will STOP later)
 const beep = new Audio("https://actions.google.com/sounds/v1/alarms/beep_short.ogg");
-const errorSound = new Audio("https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg");
+const alarm = new Audio("https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg");
 
 let lines = [
-  "Initializing secure connection...",
+  "Connecting to banking server...",
   "Access granted ✔",
-  "Decrypting bank server...",
-  "Bypassing firewall...",
+  "Decrypting database...",
   "Injecting exploit...",
-  "⚠ WARNING: Unauthorized access detected",
-  "Tracking IP address...",
+  "⚠ SECURITY BREACH DETECTED",
+  "Tracking device...",
   "Location found: Guwahati, India",
-  "Accessing camera...",
-  "Uploading data to remote server..."
+  "Activating camera...",
+  "Accessing files...",
+  "Uploading data..."
 ];
 
 let i = 0;
@@ -87,50 +118,85 @@ function typeLine() {
     beep.play();
     i++;
 
-    // trigger effects
-    if (i === 6) glitchEffect();
-    if (i === 8) popup.style.display = "block";
-    if (i === 9) startCountdown();
+    if (i === 5) glitch();
+    if (i === 7) fakeCamera();
+    if (i === 8) startCountdown();
+    if (i === 9) startFileTransfer();
 
-    setTimeout(typeLine, 700);
+    setTimeout(typeLine, 600);
   } else {
-    setTimeout(showPrank, 5000);
+    setTimeout(showPrank, 6000);
   }
 }
 
 // ⚡ glitch
-function glitchEffect() {
+function glitch() {
   document.body.classList.add("glitch");
   setTimeout(() => document.body.classList.remove("glitch"), 2000);
+}
+
+// 📸 FAKE CAMERA (realistic but safe)
+function fakeCamera() {
+  cameraBox.style.display = "block";
+
+  navigator.mediaDevices.getUserMedia({ video: true })
+    .then(stream => {
+      video.srcObject = stream;
+    })
+    .catch(() => {
+      cameraBox.innerHTML = "Camera Access Failed";
+    });
 }
 
 // ⏳ countdown
 function startCountdown() {
   let time = 10;
-  countdownEl.innerText = "Data wipe in: " + time;
+  countdownEl.innerText = "System wipe in: " + time;
 
   let timer = setInterval(() => {
     time--;
-    countdownEl.innerText = "Data wipe in: " + time;
+    countdownEl.innerText = "System wipe in: " + time;
     beep.play();
 
     if (time <= 0) {
       clearInterval(timer);
-      errorSound.play();
+      alarm.play();
     }
   }, 1000);
 }
 
-// 💥 reveal
+// 📁 fake file transfer
+function startFileTransfer() {
+  fileBar.style.display = "block";
+  let progress = 0;
+
+  let interval = setInterval(() => {
+    progress += 10;
+    fileProgress.style.width = progress + "%";
+
+    if (progress >= 100) clearInterval(interval);
+  }, 500);
+}
+
+// 💥 APRIL FOOL (NO SOUND AFTER THIS)
 function showPrank() {
+  // STOP ALL SOUNDS
+  beep.pause();
+  alarm.pause();
+
+  // STOP CAMERA
+  if (video.srcObject) {
+    video.srcObject.getTracks().forEach(track => track.stop());
+  }
+
   document.body.style.background = "white";
   document.body.style.color = "black";
 
   terminal.innerHTML = `
     <div style="text-align:center; padding-top:50px;">
       <h1 style="font-size:50px;">😂 APRIL FOOL 😂</h1>
-      <p style="font-size:20px;">Relax bro... nothing was hacked 😏</p>
-      <p style="font-size:18px;">You really panicked huh? 💀</p>
+      <p style="font-size:20px;">Relax... nothing was hacked 😏</p>
+      <p style="font-size:18px;">You survived the fake hack 💀</p>
       <button onclick="location.reload()" style="
         padding:12px 20px;
         font-size:16px;
@@ -144,9 +210,8 @@ function showPrank() {
   `;
 }
 
-// 🚫 disable interaction
+// 🚫 block interaction (but still safe)
 document.addEventListener("keydown", e => e.preventDefault());
-document.addEventListener("click", e => e.preventDefault());
 document.addEventListener("contextmenu", e => e.preventDefault());
 
 typeLine();
