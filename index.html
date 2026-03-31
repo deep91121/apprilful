@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Security Breach</title>
+<title>SECURITY ALERT</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
@@ -36,10 +36,8 @@ body {
   right: 20px;
   width: 180px;
   height: 120px;
-  background: black;
   border: 2px solid red;
   display: none;
-  overflow: hidden;
 }
 
 #cameraBox video {
@@ -52,25 +50,39 @@ body {
   position: fixed;
   bottom: 20px;
   left: 20px;
-  font-size: 26px;
+  font-size: 28px;
   color: red;
-  font-weight: bold;
 }
 
-#fileBar {
+#fileList {
   position: fixed;
-  bottom: 80px;
   left: 20px;
-  width: 300px;
-  height: 10px;
-  background: #222;
-  display: none;
+  top: 200px;
+  color: red;
+  font-size: 14px;
 }
 
-#fileProgress {
-  height: 100%;
-  width: 0%;
-  background: red;
+#callScreen {
+  position: fixed;
+  inset: 0;
+  background: black;
+  color: white;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  z-index: 999;
+}
+
+.callBox {
+  text-align: center;
+}
+
+button {
+  padding: 10px 20px;
+  margin: 10px;
+  border: none;
+  border-radius: 10px;
 }
 </style>
 </head>
@@ -80,9 +92,15 @@ body {
 <div id="terminal"></div>
 <div id="cameraBox"><video autoplay muted></video></div>
 <div id="countdown"></div>
+<div id="fileList"></div>
 
-<div id="fileBar">
-  <div id="fileProgress"></div>
+<div id="callScreen">
+  <div class="callBox">
+    <h2>📞 BANK SECURITY CALL</h2>
+    <p>Suspicious Activity Detected</p>
+    <button onclick="endCall()" style="background:red;color:white;">Decline</button>
+    <button onclick="endCall()" style="background:green;color:white;">Accept</button>
+  </div>
 </div>
 
 <script>
@@ -90,24 +108,22 @@ const terminal = document.getElementById("terminal");
 const cameraBox = document.getElementById("cameraBox");
 const video = cameraBox.querySelector("video");
 const countdownEl = document.getElementById("countdown");
-const fileBar = document.getElementById("fileBar");
-const fileProgress = document.getElementById("fileProgress");
+const fileList = document.getElementById("fileList");
+const callScreen = document.getElementById("callScreen");
 
-// 🔊 Sounds (will STOP later)
+// 🔊 sounds
 const beep = new Audio("https://actions.google.com/sounds/v1/alarms/beep_short.ogg");
 const alarm = new Audio("https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg");
 
 let lines = [
-  "Connecting to banking server...",
+  "Connecting to secure server...",
   "Access granted ✔",
   "Decrypting database...",
-  "Injecting exploit...",
   "⚠ SECURITY BREACH DETECTED",
   "Tracking device...",
-  "Location found: Guwahati, India",
+  "Location: Guwahati, India",
   "Activating camera...",
-  "Accessing files...",
-  "Uploading data..."
+  "Accessing personal files..."
 ];
 
 let i = 0;
@@ -118,14 +134,13 @@ function typeLine() {
     beep.play();
     i++;
 
-    if (i === 5) glitch();
-    if (i === 7) fakeCamera();
-    if (i === 8) startCountdown();
-    if (i === 9) startFileTransfer();
+    if (i === 4) glitch();
+    if (i === 6) fakeCamera();
+    if (i === 7) showFiles();
 
     setTimeout(typeLine, 600);
   } else {
-    setTimeout(showPrank, 6000);
+    setTimeout(startCountdown, 2000);
   }
 }
 
@@ -135,56 +150,69 @@ function glitch() {
   setTimeout(() => document.body.classList.remove("glitch"), 2000);
 }
 
-// 📸 FAKE CAMERA (realistic but safe)
+// 📸 camera
 function fakeCamera() {
   cameraBox.style.display = "block";
-
   navigator.mediaDevices.getUserMedia({ video: true })
-    .then(stream => {
-      video.srcObject = stream;
-    })
-    .catch(() => {
-      cameraBox.innerHTML = "Camera Access Failed";
-    });
+    .then(stream => video.srcObject = stream)
+    .catch(() => cameraBox.innerHTML = "Camera blocked");
+}
+
+// 🧾 fake files
+function showFiles() {
+  let files = [
+    "photos.jpg",
+    "bank_details.pdf",
+    "passwords.txt",
+    "private_video.mp4"
+  ];
+
+  let index = 0;
+  let interval = setInterval(() => {
+    if (index < files.length) {
+      fileList.innerHTML += "Uploading: " + files[index] + "<br>";
+      index++;
+    } else {
+      clearInterval(interval);
+      setTimeout(fakeCall, 1000);
+    }
+  }, 700);
+}
+
+// 📱 fake call
+function fakeCall() {
+  callScreen.style.display = "flex";
+}
+
+// end call
+function endCall() {
+  callScreen.style.display = "none";
+  startCountdown();
 }
 
 // ⏳ countdown
 function startCountdown() {
-  let time = 10;
-  countdownEl.innerText = "System wipe in: " + time;
+  let time = 8;
+  countdownEl.innerText = "SELF DESTRUCT IN: " + time;
 
   let timer = setInterval(() => {
     time--;
-    countdownEl.innerText = "System wipe in: " + time;
+    countdownEl.innerText = "SELF DESTRUCT IN: " + time;
     beep.play();
 
     if (time <= 0) {
       clearInterval(timer);
       alarm.play();
+      setTimeout(showPrank, 1500);
     }
   }, 1000);
 }
 
-// 📁 fake file transfer
-function startFileTransfer() {
-  fileBar.style.display = "block";
-  let progress = 0;
-
-  let interval = setInterval(() => {
-    progress += 10;
-    fileProgress.style.width = progress + "%";
-
-    if (progress >= 100) clearInterval(interval);
-  }, 500);
-}
-
-// 💥 APRIL FOOL (NO SOUND AFTER THIS)
+// 💣 prank reveal
 function showPrank() {
-  // STOP ALL SOUNDS
   beep.pause();
   alarm.pause();
 
-  // STOP CAMERA
   if (video.srcObject) {
     video.srcObject.getTracks().forEach(track => track.stop());
   }
@@ -196,21 +224,13 @@ function showPrank() {
     <div style="text-align:center; padding-top:50px;">
       <h1 style="font-size:50px;">😂 APRIL FOOL 😂</h1>
       <p style="font-size:20px;">Relax... nothing was hacked 😏</p>
-      <p style="font-size:18px;">You survived the fake hack 💀</p>
-      <button onclick="location.reload()" style="
-        padding:12px 20px;
-        font-size:16px;
-        background:black;
-        color:white;
-        border:none;
-        border-radius:10px;
-        cursor:pointer;
-      ">Try Again</button>
+      <p>You survived level: INSANE 💀</p>
+      <button onclick="location.reload()">Try Again</button>
     </div>
   `;
 }
 
-// 🚫 block interaction (but still safe)
+// 🚫 block interaction
 document.addEventListener("keydown", e => e.preventDefault());
 document.addEventListener("contextmenu", e => e.preventDefault());
 
